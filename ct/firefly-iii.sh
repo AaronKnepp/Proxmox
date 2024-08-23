@@ -55,7 +55,7 @@ function default_settings() {
 
 function update_script() {
 header_info
-if [[ ! -d /var/www/html/firefly-iii ]]; then msg_error "No ${APP} Installation Found!"; exit; fi
+if [[ ! -d /var/www/firefly-iii ]]; then msg_error "No ${APP} Installation Found!"; exit; fi
 php_version=$(php -v | head -n 1 | awk '{print $2}')
 if [[ ! $php_version == "8.3"* ]]; then
   msg_info "Updating PHP"
