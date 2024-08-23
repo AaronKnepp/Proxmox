@@ -55,21 +55,12 @@ function default_settings() {
 
 function update_script() {
 header_info
-#TODO:HOW TO DETERMINE IF INSTALLEDif [[ ! -f /etc/apache2/sites-available/ff3.conf ]]; then msg_error "No ${APP} Installation Found!"; exit; fi
+if [[ ! -d /var/www/html/firefly-iii ]]; then msg_error "No ${APP} Installation Found!"; exit; fi
 php_version=$(php -v | head -n 1 | awk '{print $2}')
 if [[ ! $php_version == "8.3"* ]]; then
   msg_info "Updating PHP"
   curl -sSLo /usr/share/keyrings/deb.sury.org-php.gpg https://packages.sury.org/php/apt.gpg
   echo "deb [signed-by=/usr/share/keyrings/deb.sury.org-php.gpg] https://packages.sury.org/php/ bookworm main" >/etc/apt/sources.list.d/php.list
-#bcmath    PHP BCMath Arbitrary Precision Mathematics
-#intl    PHP Internationalization extension
-#curl    PHP Curl
-#zip    PHP Zip
-#TODO: PHP Sodium
-#gd    PHP GD
-#xml    PHP XML
-#mbstring    PHP MBString
-#sqlite3    PHP support for whatever database you're going to use.
   apt-get update
   apt-get install -y php8.3 php8.3-cli php8.3-{bcmath,intl,curl,zip,gd,xml,mbstring,sqlite3}
   systemctl reload apache2
@@ -77,7 +68,6 @@ if [[ ! $php_version == "8.3"* ]]; then
   msg_ok "Updated PHP"
 fi
 msg_info "Updating ${APP}"
-#TODO:CHECK bash /var/www/html/update.sh
 msg_ok "Updated Successfully"
 exit
 }
