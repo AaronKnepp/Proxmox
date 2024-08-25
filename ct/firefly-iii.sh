@@ -63,11 +63,23 @@ if [[ ! $php_version == "8.3"* ]]; then
   echo "deb [signed-by=/usr/share/keyrings/deb.sury.org-php.gpg] https://packages.sury.org/php/ bookworm main" >/etc/apt/sources.list.d/php.list
   apt-get update
   apt-get install -y php8.3 php8.3-cli php8.3-{bcmath,intl,curl,zip,gd,xml,mbstring,sqlite3}
-  systemctl reload apache2
+  service apache2 restart
   apt autoremove
   msg_ok "Updated PHP"
 fi
 msg_info "Updating ${APP}"
+# https://github.com/firefly-iii/docs/blob/5cb887f44a77d2b86ca84249139464d740b36e86/docs/docs/how-to/firefly-iii/upgrade/self-managed.md
+# TODO: Download from githup, like install and validate integrity with hash
+# TODO: Move the old directory, like an "*-old" mv
+# Extract the zip, but don't overwrite the storage directory
+# Firefly III's upgrade commands
+cd /var/www/firefly-iii
+php artisan migrate --seed
+php artisan firefly-iii:decrypt-all
+php artisan cache:clear
+php artisan view:clear
+php artisan firefly-iii:upgrade-database
+php artisan firefly-iii:laravel-passport-keys
 msg_ok "Updated Successfully"
 exit
 }
